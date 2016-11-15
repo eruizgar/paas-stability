@@ -92,7 +92,7 @@
                         <version>${gatling-maven-plugin.version}</version>
                         <executions>
                             <execution>
-                                <id>Kafka</id>
+                                <id>Zookeeper</id>
                                 <phase>test</phase>
                                 <goals>
                                     <goal>execute</goal>
@@ -105,6 +105,49 @@
                                     <resultsFolder>target/gatling/results</resultsFolder>
                                     <bodiesFolder>src/test/resources/request-bodies</bodiesFolder>
                                     <simulationsFolder>src/test/com/stratio/tests/zookeeper</simulationsFolder>
+                                    <!--<excludes> -->
+                                    <!--<exclude>advanced/*.scala</exclude> -->
+                                    <!--<exclude>basic/*.scala</exclude> -->
+                                    <!--</excludes> -->
+                                    <!-- <noReports>false</noReports> -->
+                                    <!-- <reportsOnly>directoryName</reportsOnly> -->
+                                    <!-- <simulationClass>foo.Bar</simulationClass> -->
+                                    <!-- <jvmArgs> -->
+                                    <!-- <jvmArg>-DmyExtraParam=foo</jvmArg> -->
+                                    <!-- </jvmArgs> -->
+                                    <!-- <fork>true</fork> -->
+                                    <!-- <propagateSystemProperties>true</propagateSystemProperties> -->
+                                    <!-- <failOnError>true</failOnError> -->
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>SPARK</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>io.gatling</groupId>
+                        <artifactId>gatling-maven-plugin</artifactId>
+                        <version>${gatling-maven-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <id>Spark</id>
+                                <phase>test</phase>
+                                <goals>
+                                    <goal>execute</goal>
+                                </goals>
+                                <configuration>
+                                    <failOnError>true</failOnError>
+                                    <simulationClass>com.stratio.tests.spark.SparkSimulation</simulationClass>
+                                    <configFolder>src/test/resources</configFolder>
+                                    <dataFolder>src/test/resources/data</dataFolder>
+                                    <resultsFolder>target/gatling/results</resultsFolder>
+                                    <bodiesFolder>src/test/resources/request-bodies</bodiesFolder>
+                                    <simulationsFolder>src/test/com/stratio/tests/spark</simulationsFolder>
                                     <!--<excludes> -->
                                     <!--<exclude>advanced/*.scala</exclude> -->
                                     <!--<exclude>basic/*.scala</exclude> -->
