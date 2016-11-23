@@ -35,3 +35,12 @@ You might want to run the performance tests just for one of the Services defined
 $ mvn test -P<SERVICE>
 ```
 Where SERVICE is the Service to run the tests against (see the pom.xml file to find out the different profiles)
+
+### Requirements
+
+If you want to launch Spark tests against a Stratio PaaS instance you need to install sshpass to obtain the connection token.
+
+You can install using: 
+```
+sudo apt-get install sshpass
+```
