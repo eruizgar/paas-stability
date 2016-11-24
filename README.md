@@ -39,8 +39,3 @@ Where SERVICE is the Service to run the tests against (see the pom.xml file to f
 ### Requirements
 
 If you want to launch Spark tests against a Stratio PaaS instance you need to install sshpass to obtain the connection token.
-
-You can install using: 
-```
-sudo apt-get install sshpass
-```
