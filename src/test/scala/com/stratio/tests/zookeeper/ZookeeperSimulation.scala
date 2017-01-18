@@ -9,6 +9,7 @@ import io.gatling.core.feeder._
 import io.gatling.core.scenario.Simulation
 import io.gatling.core.structure.{ChainBuilder, ScenarioContext}
 import org.apache.curator.framework.CuratorFrameworkFactory
+import org.apache.curator.framework.imps.CuratorFrameworkState
 import org.apache.curator.retry.ExponentialBackoffRetry
 import org.apache.zookeeper.data.Stat
 
@@ -18,10 +19,25 @@ import scala.concurrent.forkjoin.ThreadLocalRandom
 class ZookeeperSimulation extends Simulation with ZnodeHandler {
 
   val runDuration = Integer.parseInt(System.getProperty("runD", "1"))
-  val servers = System.getProperty("SERVERS", "127.0.0.1:2181")
+  val servers = System.getProperty("SERVERS", "zookeeper-sec.marathon.mesos:2181")
+  val principal = System.getProperty("PRINCIPAL", "zookeeper/zookeeper-plugin-agent@DEMO.STRATIO.COM")
   val retryPolicy = new ExponentialBackoffRetry(1000, 3)
-  val curatorZookeeperClient = CuratorFrameworkFactory.newClient(servers, retryPolicy)
-  curatorZookeeperClient.start
+  val curatorZkClient = CuratorFrameworkFactory.builder()
+    .connectString(servers)
+    .retryPolicy(retryPolicy).build()
+  System.setProperty("java.security.auth.login.config", System.getProperty("JAAS","/opt/zookeeper/conf/jaas.conf"))
+  System.setProperty("java.security.krb5.conf", System.getProperty("KRB5","/etc/krb5.conf"))
+
+  def getInstance(): ZkClient = {
+    if (curatorZkClient.getState != CuratorFrameworkState.STARTED) {
+      curatorZkClient.start
+      curatorZkClient.blockUntilConnected()
+    }
+    ZkClient(curatorZkClient, principal)
+  }
+
+  val zkClient: ZkClient = getInstance()
+  val curatorZookeeperClient = zkClient.instance
   curatorZookeeperClient.getZookeeperClient.blockUntilConnectedOrTimedOut
   val recordsByGroup: Map[String, IndexedSeq[Record[String]]] =
     csv("src/test/resources/feeders/znodes.csv").records.groupBy{ record => record("group") }

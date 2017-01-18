@@ -39,3 +39,33 @@ Where SERVICE is the Service to run the tests against (see the pom.xml file to f
 ### Requirements
 
 If you want to launch Spark tests against a Stratio PaaS instance you need to install sshpass to obtain the connection token.
+
+If you want to launch Zookeeper tests against a secured zookeeper you have to point JAAS and KRB5 properties to a file correctly configured.
+In jaas.conf you have to configure keytab property with a valid keytab for your zookeeper secured.
+
+Jaas.conf example:
+```sh
+Client {
+  com.sun.security.auth.module.Krb5LoginModule required
+  useKeyTab=true
+  storeKey=true
+  useTicketCache=false
+  keyTab="/path/to/zkClient.keytab"
+  principal="your-principal";
+};
+```
+Krb5.conf example
+```sh
+[libdefaults]
+default_realm = DEMO.STRATIO.COM
+dns_lookup_realm = false
+[realms]
+DEMO.STRATIO.COM = {
+  kdc = idp.integration.labs.stratio.com
+  admin_server = idp.integration.labs.stratio.com
+  default_domain = demo.stratio.com
+}
+[domain_realm]
+.demo.stratio.com = DEMO.STRATIO.COM
+demo.stratio.com = DEMO.STRATIO.COM
+```
